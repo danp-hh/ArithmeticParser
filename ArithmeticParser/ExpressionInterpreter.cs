@@ -1,26 +1,33 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using org.mariuszgromada.math.mxparser;
 
 namespace ArithmeticParser
 {
     public class ExpressionInterpreter
     {
-        public Dictionary<Variable, int> _variableList = new Dictionary<Variable, int>();
-
-        public Dictionary<Variable, int> VariableList
-        {
-            get
-            {
-                return _variableList;
-            }
-        }
+        string ExpressionAsText;
 
         public ExpressionInterpreter(string expressionAsText)
         {
-            // VariableParser vp = new VariableParser(expressionAsText);
-            _variableList.Add(new Variable('x'), 1);
+            this.ExpressionAsText = expressionAsText;
+        }
 
+        public int CalculateWith(Dictionary<Variable, int> valuesOfVariables)
+        {
+            Expression eh = new Expression(ExpressionAsText);
+
+            List<Argument> args = new List<Argument>();
+
+            foreach(KeyValuePair<Variable, int> kvp in valuesOfVariables)
+            {
+                args.Add(new Argument(kvp.Key.name.ToString(), kvp.Value));
+            }
+
+            eh.addArguments(args.ToArray());
+
+            return (int) eh.calculate();
         }
     }
 }

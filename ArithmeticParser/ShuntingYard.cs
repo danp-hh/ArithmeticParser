@@ -10,14 +10,14 @@ namespace ArithmeticParser
         private string numbers = @"[0-9]+";
         private string operators = @"[+*\/\^\-\(\)]";
 
-        public List<string> Output { get; private set; }
+        public Stack<string> Output { get; private set; }
         
-        public List<string> Operators { get; private set; }
+        public Stack<string> Operators { get; private set; }
 
         public ShuntingYard()
         {
-            Output = new List<string>();
-            Operators = new List<string>();
+            Output = new Stack<string>();
+            Operators = new Stack<string>();
         }
 
         public void parseExpression(string expression)
@@ -29,12 +29,12 @@ namespace ArithmeticParser
             {
                 if(Regex.IsMatch(match.Value, numbers))
                 {
-                    Output.Add(match.Value);
+                    Output.Push(match.Value);
                 }
                 else
                 {
                     // here is some magic necessary
-                    Operators.Add(match.Value);
+                    Operators.Push(match.Value);
                 }
             }
 

@@ -19,6 +19,7 @@ namespace ArithmeticParser
         public ExpressionInterpreter(string expressionAsText)
         {
             // VariableParser vp = new VariableParser(expressionAsText);
+            _variableList.Add(new Variable('x'), 1);
 
         }
     }

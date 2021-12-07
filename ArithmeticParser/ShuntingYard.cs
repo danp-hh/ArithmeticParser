@@ -7,38 +7,121 @@ namespace ArithmeticParser
 {
     public class ShuntingYard
     {
-        private string numbers = @"[0-9]+";
-        private string operators = @"[+*\/\^\-\(\)]";
+        protected virtual string numbers { get; set; }
 
-        public Stack<string> Output { get; private set; }
+        protected virtual string operators { get; set; }
+
+        private string lParenthese = @"[\(]";
+        private string rParenthese = @"[\)]";
         
-        public Stack<string> Operators { get; private set; }
+        public List<string> Output { get; private set; }
+        
+        public Stack<Operator> Operators { get; private set; }
 
         public ShuntingYard()
         {
-            Output = new Stack<string>();
-            Operators = new Stack<string>();
+            numbers = @"[0-9]+";
+            operators = @"[+*\-\\]";
+
+            Output = new List<string>();
+            Operators = new Stack<Operator>();
         }
 
-        public void parseExpression(string expression)
+        protected virtual string BuildRegex()
         {
-            string numbersAndOperators = numbers + "|" + operators;
+            return numbers + "|" + operators + "|" + lParenthese + "|" + rParenthese;
+        }
+
+        public void parseExpressionToInfixNotation(string expression)
+        {
+            string numbersAndOperators = BuildRegex();
+
             var matches = Regex.Matches(expression, numbersAndOperators);
             
             foreach(Match match in matches)
             {
-                if(Regex.IsMatch(match.Value, numbers))
+                if (Regex.IsMatch(match.Value, numbers))
                 {
-                    Output.Push(match.Value);
+                    AddNumberToOutput(match.Value);
                 }
-                else
+                else if (Regex.IsMatch(match.Value, operators))
                 {
-                    // here is some magic necessary
-                    Operators.Push(match.Value);
+                    AddToOperatorStack(match.Value);
+                }
+                else if (Regex.IsMatch(match.Value, lParenthese))
+                {
+                    AddLeftParentheseToOperatorStack();
+                }
+                else if (Regex.IsMatch(match.Value, rParenthese))
+                {
+                    AddRightParentheseToOperatorStack();
                 }
             }
 
+            List<Operator> operatorList = new List<Operator>(Operators.ToArray());
+            
+            foreach(var item in operatorList)
+            {
+                Output.Add(item.OperatorSign);
+            }
 
+            Operators.Clear();
+
+        }
+
+        protected virtual void AddRightParentheseToOperatorStack()
+        {
+            while (Operators.Peek().OperatorSign != "(")
+            {
+                Output.Add(Operators.Pop().OperatorSign);
+            }
+            Operators.Pop();
+        }
+
+        protected virtual void AddLeftParentheseToOperatorStack()
+        {
+            Operators.Push(new Operator("(", 0));
+        }
+
+        protected virtual void AddToOperatorStack(string operatorString)
+        {
+            Operator opt = ParseOperator(operatorString);
+
+            if (Operators.Count > 0)
+            {
+                while (Operators.Peek().OperatorSign != "(" && opt.Precedence <= Operators.Peek().Precedence)
+                {
+                    Output.Add(Operators.Pop().OperatorSign);
+
+                    if (Operators.Count == 0)
+                        break;
+                }
+            }
+
+            Operators.Push(opt);
+        }
+
+        protected virtual void AddNumberToOutput(string number)
+        {
+            Output.Add(number);
+        }
+
+        protected virtual Operator ParseOperator(string operatorSign)
+        {
+            if (operatorSign == "+")
+                return new Operator("+", 2);
+
+            else if (operatorSign == "-")
+                return new Operator("-", 2);
+
+            else if (operatorSign == "*")
+                return new Operator("*", 3);
+
+            else if (operatorSign == @"\")
+                return new Operator(@"\", 3);
+
+            else
+                throw new Exception(String.Format("Could not parse Operator {0}", operatorSign));
         }
     }
 }

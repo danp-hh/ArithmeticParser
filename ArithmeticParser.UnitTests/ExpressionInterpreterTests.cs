@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace ArithmeticParser.UnitTests
 {
-    public class Tests
+    public class ExpressionInterpreterTests
     {
         [TestCase('x', 1)]
         [TestCase('x', 2)]

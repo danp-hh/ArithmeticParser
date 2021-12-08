@@ -32,7 +32,7 @@ namespace ArithmeticParser
             return numbers + "|" + operators + "|" + lParenthese + "|" + rParenthese;
         }
 
-        public void parseExpressionToInfixNotation(string expression)
+        public string parseExpressionToInfixNotation(string expression)
         {
             string numbersAndOperators = BuildRegex();
 
@@ -66,6 +66,14 @@ namespace ArithmeticParser
             }
 
             Operators.Clear();
+
+            string infixNotation = "";
+            foreach(var item in Output)
+            {
+                infixNotation += item;
+            }
+
+            return infixNotation;
 
         }
 

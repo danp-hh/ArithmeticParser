@@ -5,16 +5,35 @@ namespace ArithmeticParser.UnitTests
 {
     public class ExpressionInterpreterTests
     {
-        [TestCase('x', 1)]
-        [TestCase('x', 2)]
-        public void ParseExpression_SingleVariable_AddedToVariableList(char varName, int varValue)
+        [Test]
+        public void InsertVariable_SingleVariable_ExpectedValue()
         {
-            ExpressionInterpreter ei = new ExpressionInterpreter("1x");
+            string expectedExpression = "1*1";
+            ExpressionInterpreter exIn = new ExpressionInterpreter("1*x");
 
             Dictionary<Variable, int> expected = new Dictionary<Variable, int>();
-            expected.Add(new Variable(varName), varValue);
+            expected.Add(new Variable('x'), 1);
 
-            CollectionAssert.AreEqual(expected, ei._variableList);
+            string insertedInfix = exIn.InsertVariables(expected);
+
+            CollectionAssert.AreEqual(expectedExpression, insertedInfix);
+        }
+
+        [Test]
+        public void CalculateWith()
+        {
+            string expression = "3*x+2-y*(z+1)";
+            ExpressionInterpreter exIn = new ExpressionInterpreter(expression);
+            var values = new Dictionary<Variable, int>();
+
+            values.Add(new Variable('x'), 1);
+            values.Add(new Variable('y'), 2);
+            values.Add(new Variable('z'), 3);
+
+            int result = exIn.CalculateWith(values);
+
+            Assert.AreEqual(12, result);
+            
         }
     }
 }

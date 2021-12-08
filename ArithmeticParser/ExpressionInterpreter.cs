@@ -6,20 +6,43 @@ namespace ArithmeticParser
 {
     public class ExpressionInterpreter
     {
-        public Dictionary<Variable, int> _variableList = new Dictionary<Variable, int>();
-
-        public Dictionary<Variable, int> VariableList
-        {
-            get
-            {
-                return _variableList;
-            }
-        }
+        public string arithmeticExpression { get; set; }
 
         public ExpressionInterpreter(string expressionAsText)
         {
-            // VariableParser vp = new VariableParser(expressionAsText);
+            arithmeticExpression = expressionAsText;
+        }
+        
+        public int CalculateWith(Dictionary<Variable, int> variables)
+        {
+            // insert variables in expression
+
+            string parsedExpression = InsertVariables(variables);
+
+            ShuntingYard sy = new ShuntingYard();
+            string infix = sy.parseExpressionToInfixNotation(parsedExpression);
+
+            BinaryTreeParser bnt = new BinaryTreeParser();
+            double result = bnt.parseInfixNotation(infix);
+
+            return (int)result;
+        }
+
+        public string InsertVariables(Dictionary<Variable, int> variables)
+        {
+            string parsedExpression = arithmeticExpression;
+
+            foreach(KeyValuePair<Variable, int> kvp in variables)
+            {
+                if (parsedExpression.Contains(kvp.Key.name))
+                {
+                    parsedExpression = parsedExpression.Replace(kvp.Key.name.ToString(), kvp.Value.ToString(), StringComparison.InvariantCulture);
+                }
+            }
+
+            return parsedExpression;
 
         }
+
     }
 }

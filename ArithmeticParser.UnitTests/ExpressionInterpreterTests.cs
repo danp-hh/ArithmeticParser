@@ -20,9 +20,20 @@ namespace ArithmeticParser.UnitTests
         }
 
         [Test]
+        public void CalculateWith_DoubleDigitNumbers_ExpectedValue()
+        {
+            int expectedValue = 100;
+            ExpressionInterpreter exIn = new ExpressionInterpreter("10*10");
+
+            int result = exIn.Calculate();
+
+            Assert.AreEqual(expectedValue, result);
+        }
+
+        [Test]
         public void CalculateWith()
         {
-            string expression = "3*x+2-y*(z+1)";
+            string expression = "3*x+20-y*(z+17)";
             ExpressionInterpreter exIn = new ExpressionInterpreter(expression);
             var values = new Dictionary<Variable, int>();
 
@@ -32,8 +43,9 @@ namespace ArithmeticParser.UnitTests
 
             int result = exIn.CalculateWith(values);
 
-            Assert.AreEqual(12, result);
+            Assert.AreEqual(-17, result);
             
         }
+
     }
 }

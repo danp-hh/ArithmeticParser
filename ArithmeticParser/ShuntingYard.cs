@@ -105,6 +105,7 @@ namespace ArithmeticParser
                         break;
                 }
             }
+           
 
             Operators.Push(opt);
         }

@@ -5,26 +5,24 @@ namespace ArithmeticParser.UnitTests
 {
     public class BinaryTreeParserTests
     {
-
-        [TestCase("12+", 3)]
-        [TestCase("12*", 2)]
-        [TestCase("12-", -1)]
-        public void ParseInfixNotation_TwoNumbersAndOneOperator_ExpectedValue(string expression, double expectedResult)
+        [Test]
+        public void ParseInfixNotationList_OnePlusTow_Three()
         {
             BinaryTreeParser bnt = new BinaryTreeParser();
-            double result = bnt.parseInfixNotation(expression);
+            double result = bnt.parseInfixNotation(new List<string>() { "1", "2", "+" });
 
-            Assert.AreEqual(expectedResult, result);
+            Assert.AreEqual(3, result);
         }
 
-        [TestCase("123*+", 7)]
-        public void ParseInfixNotation_ThreeNumbersAndTwoOperators_ExpectedValue(string expression, double expectedResult)
+        [Test]
+        public void ParseInfixNotation_ThreeNumbersAndTwoOperators_ExpectedValue()
         {
             BinaryTreeParser bnt = new BinaryTreeParser();
-            double result = bnt.parseInfixNotation(expression);
+            double result = bnt.parseInfixNotation( new List<string>() { "1", "2", "3", "*", "+", "4", "-" });
 
-            Assert.AreEqual(expectedResult, result);
+            Assert.AreEqual(3, result);
 
         }
+
     }
 }

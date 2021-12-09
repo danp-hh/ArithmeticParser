@@ -16,16 +16,25 @@ namespace ArithmeticParser
         public int CalculateWith(Dictionary<Variable, int> variables)
         {
             // insert variables in expression
+            string oldExpression = arithmeticExpression;
+            arithmeticExpression = InsertVariables(variables);
 
-            string parsedExpression = InsertVariables(variables);
+            int result = Calculate();
+            arithmeticExpression = oldExpression;
 
+            return result;
+        }
+
+        public int Calculate()
+        {
             ShuntingYard sy = new ShuntingYard();
-            string infix = sy.parseExpressionToInfixNotation(parsedExpression);
+            string infix = sy.parseExpressionToInfixNotation(arithmeticExpression);
 
             BinaryTreeParser bnt = new BinaryTreeParser();
-            double result = bnt.parseInfixNotation(infix);
+            double result = bnt.parseInfixNotation(sy.Output);
 
             return (int)result;
+
         }
 
         public string InsertVariables(Dictionary<Variable, int> variables)

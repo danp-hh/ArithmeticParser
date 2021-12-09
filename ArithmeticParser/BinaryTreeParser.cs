@@ -37,59 +37,51 @@ namespace ArithmeticParser
             return matchStack;
         }
 
-        public double parseInfixNotation(string infixExpression)
+        public double parseInfixNotation(List<string> infixExpressionList)
         {
             string pattern = CreateRegEx();
 
-            Queue<string> matches = addMatchesToStack(infixExpression, pattern);
+            Queue<string> expressionQueue = new Queue<string>(infixExpressionList);
 
             Stack<string> currentNumbers = new Stack<string>();
             Queue<string> currentOperators = new Queue<string>();
 
-            while (Regex.IsMatch(matches.Peek(), numberRegex))
-            {
-                currentNumbers.Push(matches.Dequeue());
-            }
-
-            while (Regex.IsMatch(matches.Peek(), operatorRegex))
-            {
-                currentOperators.Enqueue(matches.Dequeue());
-                if (matches.Count == 0)
-                {
-                    break;
-                }
-            }
-
             double result = 0;
 
-            while(true)
+            while (true)
             {
-                double number1 = Double.Parse(currentNumbers.Pop());
-                double number2 = Double.Parse(currentNumbers.Pop());
-
-                result = ParseExpression(number2, number1, currentOperators.Dequeue());
-
-                if (currentNumbers.Count > 0)
+                while (Regex.IsMatch(expressionQueue.Peek(), numberRegex))
                 {
+                    currentNumbers.Push(expressionQueue.Dequeue());
+                }
+
+                while (Regex.IsMatch(expressionQueue.Peek(), operatorRegex))
+                {
+                    currentOperators.Enqueue(expressionQueue.Dequeue());
+                    if (expressionQueue.Count == 0)
+                    {
+                        break;
+                    }
+                }
+
+                while(currentNumbers.Count > 1)
+                {
+                    double number1 = Double.Parse(currentNumbers.Pop());
+                    double number2 = Double.Parse(currentNumbers.Pop());
+
+                    result = ParseExpression(number2, number1, currentOperators.Dequeue());
+
                     currentNumbers.Push(result.ToString());
                 }
-                else
+
+                if (expressionQueue.Count == 0)
                 {
                     break;
                 }
-
+                
             }
 
             return result;
-
-            /*
-            for(int i = 0; i < matches.Count; i++)
-            {
-                if(Regex.IsMatch(matches[i].Value, numbers))
-                {
-
-                }
-            }*/
 
         }
 
